@@ -20,6 +20,11 @@ LIBS += -lopencv_legacy
 LIBS += -lopencv_flann
 LIBS += -lopencv_nonfree
 
+LIBS += -L$$PWD/../opencv/release/lib/ -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_objdetect -lopencv_ts -lopencv_video
+INCLUDEPATH += $$PWD/../opencv/release/include
+DEPENDPATH += $$PWD/../opencv/release/include
+INCLUDEPATH += /usr/local/include
+
 include(deployment.pri)
 qtcAddDeployment()
 
