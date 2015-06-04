@@ -61,7 +61,7 @@ int main( )
     set_blocking (fd, 0); // set no blocking
 
     //-- 2. Read the video stream
-    capture = cvCaptureFromCAM( -1 );
+    capture = cvCaptureFromCAM( 3 );
     if( capture )
     {
         while( true )
