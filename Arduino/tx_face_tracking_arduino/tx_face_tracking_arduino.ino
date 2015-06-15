@@ -81,7 +81,7 @@ void loop() {
               indexData=0;
               int i=0;
               while(i<5){
-                inData[i]='à';
+                inData[i]='0';
                 i++; 
               }
             }
