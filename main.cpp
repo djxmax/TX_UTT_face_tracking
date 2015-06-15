@@ -8,6 +8,8 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 using namespace std;
 using namespace cv;
@@ -27,7 +29,7 @@ RNG rng(12345);
 int StrokeSize = 20;
 
 /** @function main */
-int main( )
+int main(int argc, char *argv[])
 {
 
     printf("Projet TX UTT - Lucquin Maxime et Bansais Alain\n");
@@ -60,18 +62,33 @@ int main( )
     set_interface_attribs (fd, B115200, 0); // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking (fd, 0); // set no blocking
 
+	int n;
+	char buf[20];
+	
     //-- 2. Read the video stream
-    capture = cvCaptureFromCAM( -1 );
+    capture = cvCaptureFromCAM( atoi(argv[1]) );
     if( capture )
     {
         while( true )
         {
             frame = cvQueryFrame( capture );
+            resize(frame, frame, Size(160,120), 0, 0, INTER_CUBIC);
 
             //-- 3. Apply the classifier to the frame
             if( !frame.empty() )
             {
+				
                 detectAndDisplay( frame, fd );
+                
+                n = read(fd, buf, sizeof buf);
+                if(n>0){
+					printf("Serial : ");
+					int i;
+					for(i=0;i<n;i++){
+						printf("%c", buf[i]);
+					}
+					printf(" ...... \n");
+				}
             }
             else
             {
@@ -117,6 +134,8 @@ void detectAndDisplay( Mat frame, int fd )
     char result[10]="";
     char chXaxis[10]="";
     char chYaxis[10]="";
+    int Xaxis=1;
+    int Yaxis=1;
 
     //-- Detect faces
     face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
@@ -134,8 +153,8 @@ void detectAndDisplay( Mat frame, int fd )
         int faceRight = faces[0].x + faces[0].width;
         int faceTop=faces[0].y;
         int faceBottom=faces[0].y + faces[0].height;
-        int Xaxis=1;
-        int Yaxis=1;
+        Xaxis=1;
+        Yaxis=1;
 
         printf("Face = x: %i   y:%i \n",x,y);
 
@@ -162,22 +181,7 @@ void detectAndDisplay( Mat frame, int fd )
         }
 
 
-        //convert int to char
-        sprintf(chXaxis, "%d", Xaxis);
-        sprintf(chYaxis, "%d", Yaxis);
-        //create char for serial
-        strcat(result,  chXaxis);
-        strcat(result, ",");
-        strcat(result, chYaxis);
-        strcat(result, ";");
-
-        printf("Reuslt : %s\n", result);
-
-        write(fd, result, 1);
-
-        memset(&result[0], 0, sizeof(result));
-        memset(&chXaxis[0], 0, sizeof(chXaxis));
-        memset(&chYaxis[0], 0, sizeof(chYaxis));
+        
 
 
         Mat faceROI = frame_gray( faces[0] );
@@ -193,6 +197,22 @@ void detectAndDisplay( Mat frame, int fd )
             circle( frame, center, radius, Scalar( 255, 0, 0 ), 4, 8, 0 );
         }
     }
+    //convert int to char
+	sprintf(chXaxis, "%d", Xaxis);
+	sprintf(chYaxis, "%d", Yaxis);
+	//create char for serial
+	strcat(result,  chXaxis);
+	strcat(result, ",");
+	strcat(result, chYaxis);
+	strcat(result, ";");
+
+	printf("Result : %s\n", result);
+
+	write(fd, result, 4);
+
+	memset(&result[0], 0, sizeof(result));
+	memset(&chXaxis[0], 0, sizeof(chXaxis));
+	memset(&chYaxis[0], 0, sizeof(chYaxis));
 
     //-- Show what you got
     imshow( window_name, frame );
