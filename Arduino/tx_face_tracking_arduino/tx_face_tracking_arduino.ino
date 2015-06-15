@@ -14,9 +14,11 @@ Servo servoY;
 int xangle;
 int yangle;
 
+
 // the setup routine runs once when you press reset:
 void setup() {
   // initialize the digital pin as an output and turn off 
+
   //pinMode(led1, OUTPUT);
   //pinMode(led2, OUTPUT);
   //digitalWrite(led1, LOW);
@@ -28,6 +30,7 @@ void setup() {
   yangle=90;
   servoX.write(xangle);
   servoY.write(yangle);
+
   
   // initialize serial port at a baud rate of 115200 bps
   Serial.begin(115200);
@@ -37,7 +40,6 @@ void setup() {
 
 void loop() {
   
-
    while (Serial.available() > 0) // Don't read unless there you know there is data
    {
        
@@ -85,11 +87,6 @@ void loop() {
             }
         
     }
-    
-    
-    
-   
-
 
 }
 

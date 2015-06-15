@@ -66,7 +66,9 @@ int main(int argc, char *argv[])
 	char buf[20];
 	
     //-- 2. Read the video stream
+
     capture = cvCaptureFromCAM( atoi(argv[1]) );
+
     if( capture )
     {
         while( true )
