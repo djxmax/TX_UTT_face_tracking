@@ -61,9 +61,6 @@ int main(int argc, char *argv[])
     }
     set_interface_attribs (fd, B115200, 0); // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking (fd, 0); // set no blocking
-
-	int n;
-	char buf[20];
 	
     //-- 2. Read the video stream
 
@@ -82,15 +79,6 @@ int main(int argc, char *argv[])
 				
                 detectAndDisplay( frame, fd );
                 
-                n = read(fd, buf, sizeof buf);
-                if(n>0){
-					printf("Serial : ");
-					int i;
-					for(i=0;i<n;i++){
-						printf("%c", buf[i]);
-					}
-					printf(" ...... \n");
-				}
             }
             else
             {
@@ -189,7 +177,7 @@ void detectAndDisplay( Mat frame, int fd )
         Mat faceROI = frame_gray( faces[0] );
         std::vector<Rect> eyes;
 
-        //-- In each face, detect eyes
+        //-- In face, detect eyes
         eyes_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CV_HAAR_SCALE_IMAGE, Size(30, 30) );
 
         for( size_t j = 0; j < eyes.size(); j++ )
